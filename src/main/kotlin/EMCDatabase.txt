@@ -1,0 +1,3 @@
+Item Name,Obtain Via,Location
+Aloe,Take Point,"AT, CP, CPex, SC, TR, TRex, MC, MH, FG, EG, GC, TC, UT, CH"
+Amber Flakes,Boss drop: Sky Kaiser,UT
