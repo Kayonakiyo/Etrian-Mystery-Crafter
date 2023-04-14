@@ -1,11 +1,13 @@
 import java.io.File
 import java.util.Scanner
 import kotlin.system.exitProcess
+import EMCDataScrape
 
 fun main() {
     // Setup
     var requestedItem = "" // String representing user item.
     val scnr = Scanner(System.`in`)
+    val scraper = EMCDataScrape();
 
     // Run
     println("Welcome to the Etrian Mystery Crafter! No UI yet but very functional!")
@@ -39,6 +41,7 @@ fun main() {
         // Checks for file existence as well as not being a path/directory.
         if (database.exists() && !database.isDirectory){
             println("File found! Moving forward with item finding.")
+            scraper.parseMaterialData(database); // turn csv -> objects
         } else { // If file does NOT exist, or is a path/directory, try to make a new one.
 
             println("File not found! Creating one for you!.")

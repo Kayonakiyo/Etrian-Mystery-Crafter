@@ -31,22 +31,29 @@ class EMCDataScrape {
         val databaseScanner = Scanner(csvData) // Pass in the database .csv for scanning.
         var currLine = ""
         var data: Array<String> // formatted material data, split by categories.
-        var materialCollection: Array<Material>; // the collection of easily accessible material objects.
+        var materialCollection: MutableList<Material> = ArrayList(); // the collection of easily accessible material objects.
         var itemName = ""
-        var obtainVia = ""
-        var locations = ""
+        var obtainVia: Array<String>
+        var locations: Array<String>
 
         var obtainArray: Array<String>
         var locationArray: Array<String>
+        var skipFirstLine = false;
 
         // Scan until EOF
         while (databaseScanner.hasNextLine()){
+            if(!skipFirstLine){ // skips 1st line of csv (the column labels)
+                databaseScanner.nextLine();
+                skipFirstLine = true;
+                continue;
+            }
             currLine = databaseScanner.nextLine()
             data = currLine.split(",").toTypedArray()
             // Now construct respective material object.
             itemName = data[0]
-            obtainVia = data[1].replace("\"","") // will strip quotes if available
-            locations = data[2].replace("\"","") // will strip quotes if available, leaves easy commas behind
+            obtainVia = data[1].replace("\"","").split(",").toTypedArray() // will strip quotes if available
+            locations = data[2].replace("\"","").split(",").toTypedArray() // will strip quotes if available, leaves easy commas behind
+            materialCollection.add(Material(itemName, obtainVia, locations));
         }
 
 
