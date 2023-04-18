@@ -1,2 +1,11 @@
 /.idea/
 /out/
+/projectFilesBackup/
+/gradle.properties
+/gradlew.bat
+/settings.gradle.kts
+/gradlew
+/EMCDatabase.txt
+/build.gradle.kts
+/gradle/
+/.gradle/

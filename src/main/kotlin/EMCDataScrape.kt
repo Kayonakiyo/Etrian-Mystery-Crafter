@@ -27,11 +27,10 @@ class EMCDataScrape {
      * CSV -> Material objects (as well as changing abbreviations to full names)
      *
      */
-    fun parseMaterialData(csvData: File){
+    fun parseMaterialData(csvData: File): MutableList<Material>{
         val databaseScanner = Scanner(csvData) // Pass in the database .csv for scanning.
         var currLine = ""
-        var data: Array<String> // formatted material data, split by categories.
-        var materialCollection: MutableList<Material> = ArrayList(); // the collection of easily accessible material objects.
+        val materialCollection: MutableList<Material> = ArrayList(); // the collection of easily accessible material objects.
         var itemName = ""
         var obtainVia = ""
         var locations = ""
@@ -67,12 +66,10 @@ class EMCDataScrape {
 
             // construct object and add to array of material objects
             materialCollection.add(Material(itemName,obtainArray,locationArray));
-
         }
 
-
         // Unabbreviate locations [once locations are parsed]
-        // Unfortunate lack of for each being able to edit string refs in place, so no fori loop either >:(
+        // Unfortunate lack of for each being able to edit string refs in place, so no for-i loop either >:(
         var i = 0;
         var j = 0;
         while(i < materialCollection.size){
@@ -85,9 +82,9 @@ class EMCDataScrape {
             j = 0;
         }
 
-
+        // Return the completed materials object list.
+        return materialCollection
     }
-
 
     /**
      * Un-abbreviates an abbreviated location name.
@@ -95,7 +92,7 @@ class EMCDataScrape {
      * @param abbreviatedLoc the abbreviated location name
      * @return the un-abbreviated string if possible.
      */
-    fun unabbreviateLocations(abbreviatedLoc: String): String {
+    private fun unabbreviateLocations(abbreviatedLoc: String): String {
         when (abbreviatedLoc){
             // Main Dungeons
             "ML" -> return "Mysterious Labyrinth"
