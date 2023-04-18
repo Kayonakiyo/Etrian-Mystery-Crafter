@@ -33,8 +33,8 @@ class EMCDataScrape {
         var data: Array<String> // formatted material data, split by categories.
         var materialCollection: MutableList<Material> = ArrayList(); // the collection of easily accessible material objects.
         var itemName = ""
-        var obtainVia: Array<String>
-        var locations: Array<String>
+        var obtainVia = ""
+        var locations = ""
 
         var obtainArray: Array<String>
         var locationArray: Array<String>
@@ -47,18 +47,36 @@ class EMCDataScrape {
                 skipFirstLine = true;
                 continue;
             }
+
+            // Following a 'consumption' pattern to deal with quote marks, since at least two columns can have these.
             currLine = databaseScanner.nextLine()
-            data = currLine.split(",").toTypedArray()
-            // Now construct respective material object.
-            itemName = data[0]
-            obtainVia = data[1].replace("\"","").split(",").toTypedArray() // will strip quotes if available
-            locations = data[2].replace("\"","").split(",").toTypedArray() // will strip quotes if available, leaves easy commas behind
-            materialCollection.add(Material(itemName, obtainVia, locations));
+
+            // Get item name section, then consume that input.
+            itemName = currLine.substring(0,currLine.indexOf(',')) // grab first element of comma separated string
+            currLine = currLine.substring(currLine.indexOf(',')+1);
+
+            // Get obtain methods section, then consume that input.
+            obtainVia = currLine.substring(0,currLine.indexOf(','));
+            currLine = currLine.substring(currLine.indexOf(',') + 1);
+
+            // get location tags
+            locations = currLine.trim('"'); // if possible, trim quotes at end then you have all locations (unabbreviated)
+
+            obtainArray = obtainVia.split(",").toTypedArray();
+            locationArray = locations.split(",").toTypedArray();
+
+            // construct object and add to array of material objects
+            materialCollection.add(Material(itemName,obtainArray,locationArray));
+
         }
 
 
         // Unabbreviate locations [once locations are parsed]
-
+        for(material in materialCollection){
+            for(loc in material.locations){
+                loc.replaceRange(0,loc.length,unabbreviateLocations(loc)) // kotlin is annoying, so im using replace range since i can't reassign strings in place?
+            }
+        }
     }
 
 
@@ -94,6 +112,12 @@ class EMCDataScrape {
             "HWex" -> return "Haunted Woods Extension"
             "CPex" -> return "Crystalline Peak Extension"
             "TRex" -> return "Torrential Ravine Extension"
+
+            // Side Dungeons
+            "RF" -> return "Ravine Fork"
+            "AT" -> return "Animal Trail"
+            "SC" -> return "Snowy Cavern"
+            "MC" -> return "Mountain Cleft"
 
             else -> {
                 println("Invalid location!")

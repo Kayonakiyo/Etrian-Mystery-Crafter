@@ -13,6 +13,6 @@
  * @property obtainVia list of ways to obtain the material at hand. Can include DOE, enemy, and 'spots' drops.
  *
  */
-class Material constructor(name: String, obtainVia: Array<String>, locations: Array<String>){
+data class Material constructor(var name: String, var obtainVia: Array<String>, var locations: Array<String>){
 
 }
