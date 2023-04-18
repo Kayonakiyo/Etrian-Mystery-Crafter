@@ -41,7 +41,10 @@ fun main() {
         // Checks for file existence as well as not being a path/directory.
         if (database.exists() && !database.isDirectory){
             println("File found! Moving forward with item finding.")
-            scraper.parseMaterialData(database); // turn csv -> objects
+            val materialListUnSerialized = scraper.parseMaterialData(database); // turn csv -> objects
+            scraper.serializeSave(materialListUnSerialized); // turn objects -> serialize (Saving data for later) [as a JSON string]
+            val JSONFile = File("database.json")
+            val unpackedMatList = scraper.serializeLoad(JSONFile)
         } else { // If file does NOT exist, or is a path/directory, try to make a new one.
 
             println("File not found! Creating one for you!.")

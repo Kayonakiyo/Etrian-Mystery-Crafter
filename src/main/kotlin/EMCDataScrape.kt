@@ -1,5 +1,9 @@
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.*
+import java.lang.Exception
 
 /*
  * Meant to scrape a webpage (saved locally but can be retrieved if live)
@@ -133,16 +137,36 @@ class EMCDataScrape {
     }
 
     /*
-     * Takes all parsed data from web scrape / csv and puts them into an enumeration.
+     * Serializes sorted Material objects.
      */
-    fun makeMaterialList(){
+    fun serializeSave(unserializedList: MutableList<Material>){
+        val finalJSON = Json.encodeToString(unserializedList); // serialize whole list in one go!
+        try {
+            val JSONFile = File("database.json")
+            if(JSONFile.exists() && !JSONFile.isDirectory){ // While saving, if serialized object already exists, leave it alone.
+                println("JSON file already exists, not overriding.")
+            } else { // If it does not exist, start writing.
+                println("Creating a new JSON file...")
+                if (JSONFile.createNewFile()){
+                    println("JSON file successfully written!")
+                    println("Writing to JSON file...")
+                    JSONFile.writeText(finalJSON); // dump the JSON string directly into the file.
+                } else {
+                    println("Failed to write a new JSON file. Save process failed.")
+                }
+            }
+        } catch(e: Exception){
+
+        }
 
     }
 
-    /*
-     * Serializes sorted Material objects.
+    /**
+     * Unpacks a JSON back into usable runtime objects.
      */
-    fun serializeSave(){
-
+    fun serializeLoad(JSONFile: File): MutableList<Material> {
+        val JSONReader = Scanner(JSONFile);
+        val JSONString = JSONReader.nextLine();
+        return Json.decodeFromString(JSONString);
     }
 }

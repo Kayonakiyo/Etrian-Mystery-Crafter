@@ -1,3 +1,6 @@
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 /**
  * A container class for EMD materials.
  * Allows for programming simplification of finding items and their locations.
@@ -13,6 +16,7 @@
  * @property obtainVia list of ways to obtain the material at hand. Can include DOE, enemy, and 'spots' drops.
  *
  */
+@Serializable
 data class Material constructor(var name: String, var obtainVia: Array<String>, var locations: Array<String>){
 
 }
