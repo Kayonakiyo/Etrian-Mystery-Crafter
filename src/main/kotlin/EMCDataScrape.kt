@@ -72,11 +72,20 @@ class EMCDataScrape {
 
 
         // Unabbreviate locations [once locations are parsed]
-        for(material in materialCollection){
-            for(loc in material.locations){
-                loc.replaceRange(0,loc.length,unabbreviateLocations(loc)) // kotlin is annoying, so im using replace range since i can't reassign strings in place?
+        // Unfortunate lack of for each being able to edit string refs in place, so no fori loop either >:(
+        var i = 0;
+        var j = 0;
+        while(i < materialCollection.size){
+            while(j < materialCollection.get(i).locations.size)
+            {
+                materialCollection.get(i).locations[j] = unabbreviateLocations(materialCollection.get(i).locations[j].trim()); // unabbreviate!
+                j++;
             }
+            i++;
+            j = 0;
         }
+
+
     }
 
 
