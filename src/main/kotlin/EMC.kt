@@ -1,73 +1,83 @@
 import java.io.File
 import java.util.Scanner
 import kotlin.system.exitProcess
-import EMCDataScrape
+import kotlin.collections.ArrayList
 
 fun main() {
-    // Setup
-    var requestedItem = "" // String representing user item.
-    val scnr = Scanner(System.`in`)
-    val scraper = EMCDataScrape();
 
-    // Run
-    println("Welcome to the Etrian Mystery Crafter! No UI yet but very functional!")
-    println("Name of equipment or item you're searching for?")
+    // --------------------- Setup + Initializations ------------------
+    var requestedItem:String // String representing user item.
+    val userInput = Scanner(System.`in`)
+    val scraper = EMCDataScrape()
+    var unpackedMaterialList: MutableList<Material> = ArrayList()
 
-    // Do not move forward unless item query is a valid string.
-    while(true){
-        if (scnr.hasNext()){
-            requestedItem = scnr.next()
-            if (requestedItem.isEmpty()){
-                println("Response is empty! Try again.")
-                continue;
-            } else {
-                break;
-            }
-        } else {
-            println("No token in scanner, execution will end.")
-            exitProcess(1); // exit with error
-        }
-    }
-
-
-    // Run Scrape/Updater if changes have been made [ do not implement yet, this is a separate web parser]
-
-
-    // Search for item and output relevant data.
+    // --------------------- Database Setup/Check ---------------------
     try {
-
-        var database = File("EMCDatabase.txt"); // Looks for file named EMCDatabase.txt
+        println("Initializing application...")
+        println("Looking for text-based database...")
+        val database = File("EMCDatabase.txt") // Looks for file named EMCDatabase.txt
 
         // Checks for file existence as well as not being a path/directory.
         if (database.exists() && !database.isDirectory){
-            println("File found! Moving forward with item finding.")
-            val materialListUnSerialized = scraper.parseMaterialData(database); // turn csv -> objects
-            scraper.serializeSave(materialListUnSerialized); // turn objects -> serialize (Saving data for later) [as a JSON string]
-            val JSONFile = File("database.json")
-            val unpackedMatList = scraper.serializeLoad(JSONFile)
-        } else { // If file does NOT exist, or is a path/directory, try to make a new one.
 
-            println("File not found! Creating one for you!.")
+            println("Text Database File found! Checking for serialized data...")
+            val jsonFile = File("database.json") // Attempt to prepare JSON file.
+
+            if(jsonFile.exists() && !jsonFile.isDirectory){ // If JSON is present, unpack data into runtime objects.
+                println("Serialized data found! Unpacking JSON...")
+                unpackedMaterialList = scraper.serializeLoad(jsonFile)
+            } else {
+                print("Serialized data not found. Building JSON database...")
+                unpackedMaterialList = scraper.parseMaterialData(database) // turn csv/txt -> objects
+                scraper.serializeSave(unpackedMaterialList) // turn objects -> serialize (Saving data for later) [as a JSON string]
+            }
+
+        } else { // If text file does NOT exist, or is a path/directory, try to make a new one.
+
+            println("Text Database File not found! Creating one for you!")
 
             // Checks to see if the file was made properly.
             if (database.createNewFile()){
-                println("New empty database file successfully made! Please allow sometime for generation.")
-                // Generate Database!
+                println("New empty text database file successfully made! Please allow sometime for generation.")
+                // Generate Database from Online Source + serialize!
+                // call method here [stub]
 
             } else {
-                println("New database failed to be created. Exiting program.")
-                exitProcess(1);
+                println("New text database failed to be created. Exiting program.")
+                exitProcess(1)
             }
         }
-
-        // Now launch search method to start finding.
-        searchForItem(database, requestedItem)
     } catch (e : NullPointerException){
         println("Database could not be opened. Is EMCDatabase.txt in this same directory?")
     }
 
-    // Cleanup
-    scnr.close()
+    // --------------------- Run Main Program ---------------------
+    println("Welcome to Etrian Mystery Crafter!")
+    println("Name of equipment or item you're searching for?")
+
+    // Do not move forward unless item query is a valid string.
+    while(true){
+        if (userInput.hasNext()){
+            requestedItem = userInput.next()
+            if (requestedItem.isEmpty()){
+                println("Response is empty! Try again.")
+                continue
+            } else {
+                break
+            }
+        } else {
+            println("No token in scanner, execution will end.")
+            exitProcess(1) // exit with error
+        }
+    }
+
+    // Call the search method!
+    searchForItem(unpackedMaterialList, requestedItem)
+
+
+
+    // --------------------- Cleanup ---------------------
+    userInput.close()
 
 }
 
@@ -79,13 +89,7 @@ fun main() {
  * Likely Optimization : O(log n) binary search (needs sorted database)
  *
  */
-fun searchForItem(databaseFile: File, userQuery: String){
-    if (userQuery == null){
-        println("Null input!!! Exiting program.")
-        exitProcess(1) // null db or string name, cant move forward.
-    }
+fun searchForItem(materialList: MutableList<Material>, userQuery: String){
 
     // Search for item name first.
-
-
 }

@@ -34,21 +34,21 @@ class EMCDataScrape {
     fun parseMaterialData(csvData: File): MutableList<Material>{
         val databaseScanner = Scanner(csvData) // Pass in the database .csv for scanning.
         var currLine = ""
-        val materialCollection: MutableList<Material> = ArrayList(); // the collection of easily accessible material objects.
+        val materialCollection: MutableList<Material> = ArrayList() // the collection of easily accessible material objects.
         var itemName = ""
         var obtainVia = ""
         var locations = ""
 
         var obtainArray: Array<String>
         var locationArray: Array<String>
-        var skipFirstLine = false;
+        var skipFirstLine = false
 
         // Scan until EOF
         while (databaseScanner.hasNextLine()){
             if(!skipFirstLine){ // skips 1st line of csv (the column labels)
-                databaseScanner.nextLine();
-                skipFirstLine = true;
-                continue;
+                databaseScanner.nextLine()
+                skipFirstLine = true
+                continue
             }
 
             // Following a 'consumption' pattern to deal with quote marks, since at least two columns can have these.
@@ -56,34 +56,34 @@ class EMCDataScrape {
 
             // Get item name section, then consume that input.
             itemName = currLine.substring(0,currLine.indexOf(',')) // grab first element of comma separated string
-            currLine = currLine.substring(currLine.indexOf(',')+1);
+            currLine = currLine.substring(currLine.indexOf(',')+1)
 
             // Get obtain methods section, then consume that input.
-            obtainVia = currLine.substring(0,currLine.indexOf(','));
-            currLine = currLine.substring(currLine.indexOf(',') + 1);
+            obtainVia = currLine.substring(0,currLine.indexOf(','))
+            currLine = currLine.substring(currLine.indexOf(',') + 1)
 
             // get location tags
-            locations = currLine.trim('"'); // if possible, trim quotes at end then you have all locations (unabbreviated)
+            locations = currLine.trim('"') // if possible, trim quotes at end then you have all locations (unabbreviated)
 
-            obtainArray = obtainVia.split(",").toTypedArray();
-            locationArray = locations.split(",").toTypedArray();
+            obtainArray = obtainVia.split(",").toTypedArray()
+            locationArray = locations.split(",").toTypedArray()
 
             // construct object and add to array of material objects
-            materialCollection.add(Material(itemName,obtainArray,locationArray));
+            materialCollection.add(Material(itemName,obtainArray,locationArray))
         }
 
         // Unabbreviate locations [once locations are parsed]
         // Unfortunate lack of for each being able to edit string refs in place, so no for-i loop either >:(
-        var i = 0;
-        var j = 0;
+        var i = 0
+        var j = 0
         while(i < materialCollection.size){
-            while(j < materialCollection.get(i).locations.size)
+            while(j < materialCollection[i].locations.size)
             {
-                materialCollection.get(i).locations[j] = unabbreviateLocations(materialCollection.get(i).locations[j].trim()); // unabbreviate!
-                j++;
+                materialCollection[i].locations[j] = unabbreviateLocations(materialCollection[i].locations[j].trim()) // unabbreviate!
+                j++
             }
-            i++;
-            j = 0;
+            i++
+            j = 0
         }
 
         // Return the completed materials object list.
@@ -140,17 +140,17 @@ class EMCDataScrape {
      * Serializes sorted Material objects.
      */
     fun serializeSave(unserializedList: MutableList<Material>){
-        val finalJSON = Json.encodeToString(unserializedList); // serialize whole list in one go!
+        val finalJSON = Json.encodeToString(unserializedList) // serialize whole list in one go!
         try {
-            val JSONFile = File("database.json")
-            if(JSONFile.exists() && !JSONFile.isDirectory){ // While saving, if serialized object already exists, leave it alone.
+            val jsonFile = File("database.json")
+            if(jsonFile.exists() && !jsonFile.isDirectory){ // While saving, if serialized object already exists, leave it alone.
                 println("JSON file already exists, not overriding.")
             } else { // If it does not exist, start writing.
                 println("Creating a new JSON file...")
-                if (JSONFile.createNewFile()){
+                if (jsonFile.createNewFile()){
                     println("JSON file successfully written!")
                     println("Writing to JSON file...")
-                    JSONFile.writeText(finalJSON); // dump the JSON string directly into the file.
+                    jsonFile.writeText(finalJSON) // dump the JSON string directly into the file.
                 } else {
                     println("Failed to write a new JSON file. Save process failed.")
                 }
@@ -164,9 +164,9 @@ class EMCDataScrape {
     /**
      * Unpacks a JSON back into usable runtime objects.
      */
-    fun serializeLoad(JSONFile: File): MutableList<Material> {
-        val JSONReader = Scanner(JSONFile);
-        val JSONString = JSONReader.nextLine();
-        return Json.decodeFromString(JSONString);
+    fun serializeLoad(jsonFile: File): MutableList<Material> {
+        val jsonReader = Scanner(jsonFile);
+        val jsonString = jsonReader.nextLine();
+        return Json.decodeFromString(jsonString);
     }
 }
