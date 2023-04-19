@@ -72,24 +72,34 @@ fun main() {
     }
 
     // Call the search method!
-    searchForItem(unpackedMaterialList, requestedItem)
-
-
+    searchForMaterial(unpackedMaterialList, requestedItem)
 
     // --------------------- Cleanup ---------------------
     userInput.close()
 
 }
 
-/*
+/**
+ * Given a list of Material objects, find the material in question and return
+ * said material, to be used in tandem with a crafting table.
  *
- * Given a database file and a user query, find item and return relevant info
- * such as location, price, materials needed, and where to find them.
- * O(n) naive runtime.
- * Likely Optimization : O(log n) binary search (needs sorted database)
- *
+ * @param materialList list of provided Material objects to look through
+ * @param userQuery material name to search for
+ * @return the relevant Material object
  */
-fun searchForItem(materialList: MutableList<Material>, userQuery: String){
-
+fun searchForMaterial(materialList: MutableList<Material>, userQuery: String): Material{
     // Search for item name first.
+    return materialList[0]
+}
+
+/**
+ * Given a list of Equipment objects, find the equipment in question and return
+ * said equipment, will then be used to display crafting data.
+ *
+ * @param equipmentList list of provided Equipment objects to look through
+ * @param userQuery equipment name to search for
+ * @return the relevant Equipment object
+ */
+fun searchForEquipment(equipmentList: MutableList<Equipment>, userQuery:String): Equipment{
+    return equipmentList[0]
 }

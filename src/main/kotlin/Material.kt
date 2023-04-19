@@ -8,9 +8,6 @@ import kotlinx.serialization.encodeToString
  * data already being sorted. [If need be, it can be sorted, and that sorted database
  * can be used later efficiently]
  *
- * Probably want to serialize the data afterwards.
- *
- *
  * @property name name of material, always capitalized.
  * @property locations list of locations in-game where this material is obtainable, including quests.
  * @property obtainVia list of ways to obtain the material at hand. Can include DOE, enemy, and 'spots' drops.
